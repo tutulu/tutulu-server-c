@@ -18,9 +18,17 @@ import java.util
 //http://www.bigbeeconsultants.co.uk/blog/easy-pojos-in-scala
 
 class Kudo{
-  @Id @ObjectId var id:String=_
-  @Valid var data:KudoData=_
-  @Valid var variants:List[Any]=_
+  @Id @ObjectId private[this] var mid:String=_
+  @Valid private[this] var mdata:KudoData=_
+  @Valid private[this] var mvariants:List[Any]=_
+  //getter
+  def id =mid
+  def data = mdata
+  def variants = mvariants
+  //setter
+  def id_=(s:String) = { mid = s}
+  def data_=(d:KudoData) = { mdata= d}
+  def variants_=(v:List[Any]) = {mvariants=v}
 }
 
 case class ISBN(i_13:String,i_10:String)

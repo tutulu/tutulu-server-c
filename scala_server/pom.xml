@@ -77,10 +77,9 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.scala-tools.testing</groupId>
       <artifactId>specs_2.8.0</artifactId>
@@ -89,10 +88,16 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest</artifactId>
-      <version>1.2</version>
+      <artifactId>scalatest_2.9.0</artifactId>
+      <version>1.8</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId>
+          <version>1.8.4</version>
+    </dependency>
+
 
   </dependencies>
 
@@ -162,7 +167,7 @@
                         <transformers>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>dw_server.services.App</mainClass>
+                                <mainClass>dw_server.services.TutuluService</mainClass>
                             </transformer>
                         </transformers>
                     </configuration>

@@ -4,7 +4,7 @@ import com.yammer.dropwizard.ScalaService
 import com.yammer.dropwizard.bundles.ScalaBundle
 import com.yammer.dropwizard.config.{Environment, Bootstrap}
 import configurations.TutuluConfiguration
-import dw_server.resources.{SearchKudosRessource, TutuluResource}
+import dw_server.resources._
 import dw_server.health.{JedisHealthCheck, MongoHealthCheck, TutuluHealthCheck}
 import com.mongodb.{DB, Mongo}
 import net.vz.mongodb.jackson.JacksonDBCollection
@@ -17,7 +17,7 @@ import redis.clients.jedis.{Jedis, JedisPoolConfig, JedisPool}
 
 
 
-object App extends ScalaService[TutuluConfiguration] {
+object TutuluService extends ScalaService[TutuluConfiguration] {
    def initialize(bootstrap:Bootstrap[TutuluConfiguration]){
      bootstrap.setName("hello_world")
      bootstrap.addBundle(new ScalaBundle)
@@ -46,7 +46,9 @@ object App extends ScalaService[TutuluConfiguration] {
      environment.addHealthCheck(new JedisHealthCheck(pool))
 
      //searchKudos
-     environment.addResource(new SearchKudosRessource(kudos))
+     environment.addResource(new SearchKudosResource(kudos))
+     environment.addResource(new AddKudosResource(kudos))
+     environment.addResource(new RemoveKudosResource(kudos))
 
      //sampleResource
      environment.addResource(new TutuluResource(configuration.defaultName, configuration.template))

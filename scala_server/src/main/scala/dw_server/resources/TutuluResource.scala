@@ -9,7 +9,7 @@ package dw_server.resources
 
 import com.yammer.metrics.annotation.Timed
 
-import javax.ws.rs.{GET,Path,Produces,QueryParam}
+import javax.ws.rs._
 import javax.ws.rs.core.MediaType
 import java.util.concurrent.atomic.AtomicLong
 import net.vz.mongodb.jackson.JacksonDBCollection
@@ -29,9 +29,24 @@ class TutuluResource(val defaultName:String, val template:String){
 
 }
 
-@Path("/search")
+
+@Path("/addKudo")
 @Produces(Array(MediaType.APPLICATION_JSON))
-class SearchKudosRessource(val kudos:JacksonDBCollection[Kudo,String]){
+class AddKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
+
+
+
+}
+
+@Path("/removeKudo")
+@Produces(Array(MediaType.APPLICATION_JSON))
+class RemoveKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
+
+}
+
+@Path("/searchKudo")
+@Produces(Array(MediaType.APPLICATION_JSON))
+class SearchKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
 
   @GET
   @Timed

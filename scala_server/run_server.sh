@@ -19,6 +19,9 @@ function refactorSample {
 
 }
 
+function runDB {
+	mongod & redis-server
+}
 ######################################################
 #                    main part                       #                    
 ######################################################
@@ -26,7 +29,7 @@ function refactorSample {
 defaultc="./sample.yml"
 config=$defaultc
 
-opts=":r:c:ph"
+opts=":r:c:phd"
 while getopts "$opts" optchar; do
 	case "${optchar}" in 	
 		p)
@@ -57,6 +60,10 @@ while getopts "$opts" optchar; do
  		r)
  			refactorSample $OPTARG 
  			exit 0 
+ 			;;
+ 		d)
+ 			runDB 
+ 			exit 0
  			;;
 		*)
 			if [ "$OPTERR" != 1 ] || [ "${opts:0:1}" = ":" ]; then

@@ -14,8 +14,8 @@ import org.specs.runner.{ JUnitSuiteRunner, JUnit }
  *
  * For more information on how to write or run specifications, please visit: http://code.google.com/p/specs.
  *
-
-//@RunWith(classOf[JUnitSuiteRunner])
+ */
+@RunWith(classOf[JUnitSuiteRunner])
 class MySpecTest extends Specification with JUnit /*with ScalaCheck*/ {
 
   "My" should {
@@ -43,5 +43,3 @@ object MySpecMain {
     new MySpecTest().main(args)
   }
 }
-
- */
