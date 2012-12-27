@@ -8,12 +8,14 @@
 package dw_server.resources
 
 import com.yammer.metrics.annotation.Timed
-
 import javax.ws.rs._
-import javax.ws.rs.core.MediaType
+import core.Response.Status
+import core.{Response, MediaType}
 import java.util.concurrent.atomic.AtomicLong
-import net.vz.mongodb.jackson.JacksonDBCollection
-import dw_server.models.Kudo
+import net.vz.mongodb.jackson.{DBCursor, JacksonDBCollection}
+import dw_server.models.{testJson, Kudo}
+import javax.validation.Valid
+import dw_server.utils.ResourceHelper
 
 @Path("/hello_word")
 @Produces(Array(MediaType.APPLICATION_JSON))
@@ -31,27 +33,34 @@ class TutuluResource(val defaultName:String, val template:String){
 
 
 @Path("/addKudo")
-@Produces(Array(MediaType.APPLICATION_JSON))
+@Produces(Array("application/json"))
+@Consumes(Array("application/json"))
 class AddKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
 
+  @PUT
+  def createKudo(@Valid k:Kudo):Response={
+      ResourceHelper notFoundIfNull(k)
+      val cursor: DBCursor[Kudo] = kudos.find.is("data.lucid", (k.getData).getLucid)
+      if (cursor.hasNext){
+          return Response.status(Status.CONFLICT).build()
+      }
+      kudos.save(k)
 
+      return Response.noContent().build()
+  }
 
 }
 
-@Path("/removeKudo")
-@Produces(Array(MediaType.APPLICATION_JSON))
-class RemoveKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
-
-}
-
-@Path("/searchKudo")
+@Path("/searchKudo/{id}")
 @Produces(Array(MediaType.APPLICATION_JSON))
 class SearchKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
 
   @GET
   @Timed
-  def getKudos(){
-
+  def getKudos(@PathParam("id") id:String):Kudo={
+      val cursor: DBCursor[Kudo] =kudos.find().is("data.lucid", id)
+      ResourceHelper notFoundIfNull (cursor)
+      return cursor.next
   }
 }
 

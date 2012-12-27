@@ -48,7 +48,6 @@ object TutuluService extends ScalaService[TutuluConfiguration] {
      //searchKudos
      environment.addResource(new SearchKudosResource(kudos))
      environment.addResource(new AddKudosResource(kudos))
-     environment.addResource(new RemoveKudosResource(kudos))
 
      //sampleResource
      environment.addResource(new TutuluResource(configuration.defaultName, configuration.template))

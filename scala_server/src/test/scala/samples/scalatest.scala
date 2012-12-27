@@ -26,92 +26,53 @@ One way to use ScalaTest is to help make JUnit or TestNG tests more
 clear and concise. Here's an example:
 */
 
+import configurations.TutuluConfiguration
 import org.scalatest._
 import junit.JUnitRunner
 import org.specs.mock.Mockito
 import org.specs.specification.DefaultExampleExpectationsListener
 import org.junit.runner.RunWith
-import dw_server.models.{ISBN, Kudo}
-
-
-//class StackSuite extends Assertions {
-//
-//  @Test def stackShouldPopValuesIinLastInFirstOutOrder() {
-//    val stack = new Stack[Int]
-//    stack.push(1)
-//    stack.push(2)
-//    assert(stack.pop() === 2)
-//    assert(stack.pop() === 1)
-//  }
-//
-//  @Test def stackShouldThrowNoSuchElementExceptionIfAnEmptyStackIsPopped() {
-//    val emptyStack = new Stack[String]
-//    intercept[NoSuchElementException] {
-//      emptyStack.pop()
-//    }
-//  }
-//}
-//
-//import org.junit.runner.RunWith
-//import org.scalatest.junit.JUnitRunner
-//@RunWith(classOf[JUnitRunner])
-//class ExampleSuite extends WordSpec with Mockito with DefaultExampleExpectationsListener{
-//
-//    "it" should {
-//      "be possible to use the Mockito trait from specs" in {
-//        val m = mock[java.util.List[String]]
-//        m.get(0) returns "one"
-//        m.get(0)
-//        there was one(m).get(0)
-//      }
-//    }
-////
-////   test( "pop is invoked on noempty") {
-////    val stack = new Stack[Int]
-////    stack.push(1)
-////    stack.push(2)
-////    val result = stack.pop()
-////    assert(result === 2)
-////  }
-//
-//}
-
+import dw_server.models.{KudoData, ISBN, Kudo}
+import org.codehaus.jackson.map.ObjectMapper
+import java.io.File
+import com.yammer.dropwizard.testing.JsonHelpers.asJson
+import com.yammer.dropwizard.testing.JsonHelpers.jsonFixture
+import com.yammer.dropwizard.config.Environment
 
 //TODO
 @RunWith(classOf[JUnitRunner])
+class TutuluPOJOSuit extends FunSuite{
+
+  val mapper = new ObjectMapper()
+  //test POJO: Kudos
+  test("isbn.json is properly mapped to ISBN class") {
+      val isbn:ISBN = mapper.readValue(new File("src/test/scala/test_json/isbn.json"),classOf[ISBN])
+      assert(isbn.getI_10 === "1234567890")
+      assert(isbn.getI_13 === "1234567890123")
+      //println(asJson(jsonFixture("./src/test/scala/test_json/isbn.json"),classOf[ISBN]))
+
+  }
+
+  test( "kudo.json is properly mapped to Kudo class") {
+     // val kudo:Kudo = mapper.readValue(new File("src/test/scala/test_json/kudos.json"),classOf[Kudo])
+
+  }
+  test("kudoData.json is properly mapped to KudoData class"){
+      // val kd:KudoData= mapper.readValue(new File("src/test/scala/test_json/kd.json"),classOf[KudoData])
+
+  }
+}
+
+//TODO ; check dropwizard-core for service testing
+@RunWith(classOf[JUnitRunner])
 class TutuluServiceSuit extends WordSpec with Mockito with DefaultExampleExpectationsListener
                                          with BeforeAndAfter{
+ //test TutuluService
+  var env:Environment = mock[Environment]
+  var config:TutuluConfiguration = new TutuluConfiguration
 
-  /**var config:TutuluConfiguration = _
-  var service:ScalaService[TutuluConfiguration] =_
-  var mdb:Mongo=_
-  var jedb:JedisPool=_
-  **/
-
-  before{
+  before {
+   // def setup={//setup custom configuration}
   }
-
-  //test POJO: Kudos
-  "isbn" should {
-      "should respect format of isbn_10, isbn_13" in {
-          val isbn = new ISBN("0000000000", "0000000000")
-      }
-  }
-
-  "kudo" should {
-    "" in {
-
-     }
-  }
-  "kudoData" should {
-    "" in {
-
-    }
-
-  }
-
-  //test TutuluService
-
-
 
 }

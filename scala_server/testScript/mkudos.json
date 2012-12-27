@@ -1,0 +1,30 @@
+{
+    "data" : 
+	{
+		"text":	"testJson received!"
+	},
+
+	"variants" :[
+		{	
+			"lucid"	:	"lucid1.1",
+			"name"	:	"Sword Art Online 1: Aincrad",
+			"category"	:	"Light Novel",
+			"isbn"	:	{"i_10":	""	,
+						 "i_13":	"978-4-04-867760-8"	},
+			"attributes":	{	"description":	"Aincrad Volume 1"
+							}
+		},
+		
+		{
+			"lucid"	:	"lucid1.2",
+			"name"	:	"Sword Art Online 2: Aincrad",
+			"category"	:	"Light Novel",
+			"isbn"	:	{"i_10":	""	,
+						 "i_13":	"978-4-04-867935-0"	},
+			"attributes":	{	"description":	"Aincrad Volume 2"
+							}
+		
+		}
+	]
+}
+ 
