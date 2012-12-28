@@ -38,8 +38,12 @@ import com.yammer.dropwizard.testing.JsonHelpers.{asJson,fromJson,jsonFixture}
 import com.yammer.dropwizard.config.{Bootstrap, Environment}
 import dw_server.services.TutuluService
 import dw_server.resources.{SearchKudosResource, AddKudosResource}
-import org.specs.mock.Mockito
 import com.yammer.dropwizard.testing.ResourceTest
+import net.vz.mongodb.jackson.JacksonDBCollection
+import org.junit._
+import Assert._
+import com.mongodb.DBRef
+import org.scalatest.matchers.Matcher
 
 //TODO
 @RunWith(classOf[JUnitRunner])
@@ -54,6 +58,9 @@ class TutuluPOJOSuit extends FunSuite{
       assert(isbn.getI_13 == (isbn_test.i_13))
       //jsonFixture only search file inside src/test/resources
       //deserialization
+
+      println("serial: %s".format(asJson(isbn_test)))
+      println("fixture: %s".format(jsonFixture("isbn.json")))
       assert( isbn_test == fromJson(jsonFixture("isbn.json"),classOf[ISBN]))
       //serialization
       assert(asJson(isbn_test) == jsonFixture("isbn.json"))
@@ -62,6 +69,13 @@ class TutuluPOJOSuit extends FunSuite{
   test( "kudo.json is properly mapped to Kudo class") {
      val kudo:Kudo = mapper.readValue(new File("src/test/resources/kudos.json"),classOf[Kudo])
      val kudo_test = new Kudo()
+     println("serial: %s".format(asJson(kudo_test)))
+     println("fixture: %s".format(jsonFixture("kudos.json")))
+     //deseria;
+     assert( kudo_test == fromJson(jsonFixture("kudos.json"),classOf[ISBN]))
+     //serialization
+     assert(asJson(kudo_test) == jsonFixture("kudos.json"))
+
   }
   test("kudoData.json is properly mapped to KudoData class"){
       val kd:KudoData= mapper.readValue(new File("src/test/resources/kd.json"),classOf[KudoData])
@@ -70,10 +84,12 @@ class TutuluPOJOSuit extends FunSuite{
 
       kd_test.isbn=new ISBN("","978-4-04-867760-8")
       assert(kd.getLucid === kd_test.getLucid)
-      assert(kd.getName === kd_test.getName)
+      assert(kd.getName == kd_test.getName)
       assert(kd.getCategory == kd_test.getCategory)
 
       //deserialization
+      println("serial: %s".format(asJson(kd_test)))
+      println("fixture: %s".format(jsonFixture("kd.json")))
       assert( kd_test == fromJson(jsonFixture("kd.json"),classOf[KudoData]))
       //serialization
       assert(asJson(kd_test) == jsonFixture("kd.json"))
@@ -82,9 +98,10 @@ class TutuluPOJOSuit extends FunSuite{
   }
 }
 
-//TODO ; check dropwizard-core for service testing
+
+
 @RunWith(classOf[JUnitRunner])
-class TutuluServiceSuit extends WordSpec with Mockito with DefaultExampleExpectationsListener
+class TutuluServiceSuit extends WordSpec with org.specs.mock.Mockito with DefaultExampleExpectationsListener
                                          with BeforeAndAfter{
  //test TutuluService
   var env:Environment = mock[Environment]
@@ -96,7 +113,6 @@ class TutuluServiceSuit extends WordSpec with Mockito with DefaultExampleExpecta
 
   }
 
-
   "AddKudoResource, SearchKudosResource" should {
     "be added to TutuluService" in{
       TutuluService.run(config,env)
@@ -105,13 +121,29 @@ class TutuluServiceSuit extends WordSpec with Mockito with DefaultExampleExpecta
 
     }
   }
-
-
 }
 
+
+//Junit
 class TutuluResourceSuit extends ResourceTest{
-  def setUpResources() {
 
+    val mapper = new ObjectMapper()
+    val kudo = mapper.readValue(new File("src/test/resources/kudos.json"),classOf[Kudo])
+    var kudos =org.mockito.Mockito.mock(classOf[JacksonDBCollection[Kudo,String]])
+
+
+    override def setUpResources() {
+
+//      org.mockito.Mockito.when(kudos.find().next()).thenReturn(kudo)
+//      addResource(new AddKudosResource(kudos));
+    }
+
+    @Test
+    def addKudoResourceTest(){
+//
+//      assertThat("GET requests fetch the Person by ID",
+//      client().resource("/addKudo/").put(classOf[Kudo]));
+
+      org.mockito.Mockito.verify(kudos).find();
   }
-
 }

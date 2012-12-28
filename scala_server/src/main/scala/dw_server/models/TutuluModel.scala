@@ -14,7 +14,9 @@ import com.google.common.collect.Maps
 import java.util
 import org.codehaus.jackson.annotate.JsonProperty
 import reflect.BeanProperty
-import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.{JsonInclude, JsonCreator}
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.annotation.JsonInclude.Include
 
 
 //when in doubt, check POJO format reference:
@@ -34,6 +36,7 @@ class ISBN(
   override def equals(o:Any)= o.isInstanceOf[ISBN] && o.asInstanceOf[ISBN].getI_10==i_10 && o.asInstanceOf[ISBN].getI_13 ==i_13}
 
 
+@JsonInclude(Include.NON_NULL)
 class KudoData(
   @BeanProperty @NotEmpty @JsonProperty("lucid") var lucid:String,
   @BeanProperty @NotEmpty @JsonProperty("name") var name:String,
@@ -44,7 +47,15 @@ class KudoData(
   @BeanProperty @JsonProperty("attributes") var attributes:util.Map[Any,Any]=_
 
   def this(){this("","","")}
+  override def equals(o:Any)={
 
+    val v1=o.isInstanceOf[KudoData]
+    val v0=o.asInstanceOf[KudoData]
+    val v2=v0.getLucid==lucid && v0.getName ==name && v0.getCategory==category
+    val v3=v0.getAuthor==author && v0.getIsbn==isbn && v0.getAttributes ==attributes
+
+    v1 && v2 && v3
+  }
 }
 
 /*class testJson{
