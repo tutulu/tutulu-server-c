@@ -23,7 +23,7 @@
 			"category"	:	"Light Novel",
 			"isbn"	:	{"i_10":	""	,
 						 "i_13":	"978-4-04-867935-0"	},
-			"attributes" : {}
+			"attributes" : {"description":"hello"}
 		}
 	]
 }

@@ -40,7 +40,7 @@ class AddKudosResource(val kudos:JacksonDBCollection[Kudo,String]){
   @PUT
   def createKudo(@Valid k:Kudo):Response={
       ResourceHelper notFoundIfNull(k)
-      val cursor: DBCursor[Kudo] = kudos.find.is("data.lucid", (k.getData).getLucid)
+      val cursor: DBCursor[Kudo] = kudos.find().is("data.lucid", (k.getData).getLucid)
       if (cursor.hasNext){
           return Response.status(Status.CONFLICT).build()
       }

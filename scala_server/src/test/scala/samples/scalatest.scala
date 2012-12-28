@@ -31,7 +31,7 @@ import org.scalatest._
 import junit.JUnitRunner
 import org.specs.specification.DefaultExampleExpectationsListener
 import org.junit.runner.RunWith
-import dw_server.models.{KudoData, ISBN, Kudo}
+import dw_server.models.{VariantList, KudoData, ISBN, Kudo}
 import org.codehaus.jackson.map.ObjectMapper
 import java.io.File
 import com.yammer.dropwizard.testing.JsonHelpers.{asJson,fromJson,jsonFixture}
@@ -41,9 +41,8 @@ import dw_server.resources.{SearchKudosResource, AddKudosResource}
 import com.yammer.dropwizard.testing.ResourceTest
 import net.vz.mongodb.jackson.JacksonDBCollection
 import org.junit._
-import Assert._
-import com.mongodb.DBRef
-import org.scalatest.matchers.Matcher
+import com.google.common.collect.Maps
+import java.util
 
 //TODO
 @RunWith(classOf[JUnitRunner])
@@ -69,10 +68,29 @@ class TutuluPOJOSuit extends FunSuite{
   test( "kudo.json is properly mapped to Kudo class") {
      val kudo:Kudo = mapper.readValue(new File("src/test/resources/kudos.json"),classOf[Kudo])
      val kudo_test = new Kudo()
+     kudo_test.data=new KudoData("lucid1.0","Sword Art Online","Light Novel")
+     kudo_test.data.author="Reki Kawahara"
+     val tempAL=new util.ArrayList[KudoData]
+     tempAL.add({
+       val v1=new KudoData("lucid1.1","Sword Art Online 1: Aincrad","Light Novel")
+       v1.isbn=new ISBN("","978-4-04-867760-8")
+       v1.attributes=Maps.newHashMap()
+       v1
+     })
+     tempAL.add({
+      val v1=new KudoData("lucid1.2","Sword Art Online 2: Aincrad","Light Novel")
+      v1.isbn=new ISBN("","978-4-04-867935-0")
+      v1.attributes=Maps.newHashMap()
+      v1.attributes.put("description","hello")
+      v1
+     })
+     kudo_test.variants=new Array[KudoData](tempAL.size)
+     tempAL.toArray[KudoData](kudo_test.variants)
+
      println("serial: %s".format(asJson(kudo_test)))
      println("fixture: %s".format(jsonFixture("kudos.json")))
      //deseria;
-     assert( kudo_test == fromJson(jsonFixture("kudos.json"),classOf[ISBN]))
+     assert( kudo_test == fromJson(jsonFixture("kudos.json"),classOf[Kudo]))
      //serialization
      assert(asJson(kudo_test) == jsonFixture("kudos.json"))
 
@@ -136,14 +154,7 @@ class TutuluResourceSuit extends ResourceTest{
 
 //      org.mockito.Mockito.when(kudos.find().next()).thenReturn(kudo)
 //      addResource(new AddKudosResource(kudos));
+
     }
 
-    @Test
-    def addKudoResourceTest(){
-//
-//      assertThat("GET requests fetch the Person by ID",
-//      client().resource("/addKudo/").put(classOf[Kudo]));
-
-      org.mockito.Mockito.verify(kudos).find();
-  }
 }
