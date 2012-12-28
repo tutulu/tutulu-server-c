@@ -26,18 +26,20 @@ One way to use ScalaTest is to help make JUnit or TestNG tests more
 clear and concise. Here's an example:
 */
 
-import configurations.TutuluConfiguration
+import configurations.{JedisConfiguration, MongoConfiguration, TutuluConfiguration}
 import org.scalatest._
 import junit.JUnitRunner
-import org.specs.mock.Mockito
 import org.specs.specification.DefaultExampleExpectationsListener
 import org.junit.runner.RunWith
 import dw_server.models.{KudoData, ISBN, Kudo}
 import org.codehaus.jackson.map.ObjectMapper
 import java.io.File
-import com.yammer.dropwizard.testing.JsonHelpers.asJson
-import com.yammer.dropwizard.testing.JsonHelpers.jsonFixture
-import com.yammer.dropwizard.config.Environment
+import com.yammer.dropwizard.testing.JsonHelpers.{asJson,fromJson,jsonFixture}
+import com.yammer.dropwizard.config.{Bootstrap, Environment}
+import dw_server.services.TutuluService
+import dw_server.resources.{SearchKudosResource, AddKudosResource}
+import org.specs.mock.Mockito
+import com.yammer.dropwizard.testing.ResourceTest
 
 //TODO
 @RunWith(classOf[JUnitRunner])
@@ -45,20 +47,37 @@ class TutuluPOJOSuit extends FunSuite{
 
   val mapper = new ObjectMapper()
   //test POJO: Kudos
-  test("isbn.json is properly mapped to ISBN class") {
-      val isbn:ISBN = mapper.readValue(new File("src/test/scala/test_json/isbn.json"),classOf[ISBN])
-      assert(isbn.getI_10 === "1234567890")
-      assert(isbn.getI_13 === "1234567890123")
-      //println(asJson(jsonFixture("./src/test/scala/test_json/isbn.json"),classOf[ISBN]))
-
+  test("isbn.json is properly mapped to ISBN class: deseri/serialization ") {
+    val isbn_test=new ISBN("1234567890","1234567890123")
+    val isbn:ISBN = mapper.readValue(new File("src/test/resources/isbn.json"),classOf[ISBN])
+      assert(isbn.getI_10 == isbn_test.i_10)
+      assert(isbn.getI_13 == (isbn_test.i_13))
+      //jsonFixture only search file inside src/test/resources
+      //deserialization
+      assert( isbn_test == fromJson(jsonFixture("isbn.json"),classOf[ISBN]))
+      //serialization
+      assert(asJson(isbn_test) == jsonFixture("isbn.json"))
   }
 
   test( "kudo.json is properly mapped to Kudo class") {
-     // val kudo:Kudo = mapper.readValue(new File("src/test/scala/test_json/kudos.json"),classOf[Kudo])
-
+     val kudo:Kudo = mapper.readValue(new File("src/test/resources/kudos.json"),classOf[Kudo])
+     val kudo_test = new Kudo()
   }
   test("kudoData.json is properly mapped to KudoData class"){
-      // val kd:KudoData= mapper.readValue(new File("src/test/scala/test_json/kd.json"),classOf[KudoData])
+      val kd:KudoData= mapper.readValue(new File("src/test/resources/kd.json"),classOf[KudoData])
+      val kd_test = new KudoData("lucid1.1", "Sword Art Online 1: Aincrad",
+                    "Light Novel")
+
+      kd_test.isbn=new ISBN("","978-4-04-867760-8")
+      assert(kd.getLucid === kd_test.getLucid)
+      assert(kd.getName === kd_test.getName)
+      assert(kd.getCategory == kd_test.getCategory)
+
+      //deserialization
+      assert( kd_test == fromJson(jsonFixture("kd.json"),classOf[KudoData]))
+      //serialization
+      assert(asJson(kd_test) == jsonFixture("kd.json"))
+
 
   }
 }
@@ -72,7 +91,27 @@ class TutuluServiceSuit extends WordSpec with Mockito with DefaultExampleExpecta
   var config:TutuluConfiguration = new TutuluConfiguration
 
   before {
-   // def setup={//setup custom configuration}
+          config.mongoC=new MongoConfiguration()
+          config.jedisC=new JedisConfiguration()
+
+  }
+
+
+  "AddKudoResource, SearchKudosResource" should {
+    "be added to TutuluService" in{
+      TutuluService.run(config,env)
+      there was atLeastOne(env).addResource(any[AddKudosResource])
+      there was one(env).addResource(any[SearchKudosResource])
+
+    }
+  }
+
+
+}
+
+class TutuluResourceSuit extends ResourceTest{
+  def setUpResources() {
+
   }
 
 }

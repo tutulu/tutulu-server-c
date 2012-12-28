@@ -14,6 +14,7 @@ import com.google.common.collect.Maps
 import java.util
 import org.codehaus.jackson.annotate.JsonProperty
 import reflect.BeanProperty
+import com.fasterxml.jackson.annotation.JsonCreator
 
 
 //when in doubt, check POJO format reference:
@@ -24,18 +25,26 @@ class Kudo{
   @BeanProperty @Valid var data:KudoData=_
   @BeanProperty @Valid var variants:List[Any]=_
 }
+class ISBN(
+  @BeanProperty @JsonProperty("i_10") var i_10:String,
+  @BeanProperty @JsonProperty("i_13") var i_13:String
+){
+  def this()=this("","")
+  def this(v:String)=this()
+  override def equals(o:Any)= o.isInstanceOf[ISBN] && o.asInstanceOf[ISBN].getI_10==i_10 && o.asInstanceOf[ISBN].getI_13 ==i_13}
 
-case class ISBN(
-  @BeanProperty @JsonProperty("i_10") i_10:String,
-  @BeanProperty @JsonProperty("i_13") i_13:String
-)
-class KudoData{
-  @BeanProperty @NotEmpty @JsonProperty("lucid") var lucid:String=_
-  @BeanProperty @NotEmpty @JsonProperty("name") var name:String=_
-  @BeanProperty @NotEmpty @JsonProperty("category") var category:String=_
+
+class KudoData(
+  @BeanProperty @NotEmpty @JsonProperty("lucid") var lucid:String,
+  @BeanProperty @NotEmpty @JsonProperty("name") var name:String,
+  @BeanProperty @NotEmpty @JsonProperty("category") var category:String
+){
   @BeanProperty @JsonProperty("author") var author:String=_
-  @BeanProperty @JsonProperty("isbn") var isbn:ISBN=_
-  //@BeanProperty @JsonProperty("attributes") var attributes:util.Map[Nothing,Nothing]=Maps.newHashMap()
+  @BeanProperty @Valid var isbn:ISBN=_
+  @BeanProperty @JsonProperty("attributes") var attributes:util.Map[Any,Any]=_
+
+  def this(){this("","","")}
+
 }
 
 /*class testJson{
